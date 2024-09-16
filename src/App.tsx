@@ -1,12 +1,9 @@
-import { useState } from 'react'
-import { Button, DatePicker } from 'antd'
+import { RouterProvider } from 'react-router-dom'
+
+import { router } from '@/routes'
+
 function App() {
-  return (
-    <>
-      <Button type='primary'>PRESS ME</Button>
-      <DatePicker placeholder='select date' />
-    </>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App
