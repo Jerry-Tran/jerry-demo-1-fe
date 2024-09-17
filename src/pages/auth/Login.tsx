@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-import { Button, Input, Typography } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { Button, Input, Spin, Typography } from 'antd'
 import { MailOutlined, LockOutlined } from '@ant-design/icons'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 
-import { apiLogin } from '@/apis'
+import { loginService } from '@/services'
+
+import { resetMessage } from '@/store/slices'
 
 import authBg from '@/assets/images/auth-bg.png'
 
@@ -21,6 +25,14 @@ const schema = yup.object().shape({
 })
 
 export function Login() {
+  const dispatch = useDispatch()
+
+  const navigate = useNavigate()
+
+  const { isLoggedIn, message } = useSelector((state) => state.auth)
+
+  const [loading, setLoading] = React.useState<boolean>(false)
+
   const {
     control,
     handleSubmit,
@@ -29,10 +41,20 @@ export function Login() {
     resolver: yupResolver(schema)
   })
 
-  const handleLogin = async (data: any) => {
-    const response = await apiLogin(data)
-    console.log(response)
+  const handleLogin = async (data) => {
+    setLoading(true)
+    await dispatch(loginService(data))
+    setLoading(false)
   }
+
+  useEffect(() => {
+    dispatch(resetMessage())
+  }, [dispatch])
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    isLoggedIn && navigate('/')
+  }, [isLoggedIn, navigate])
 
   return (
     <section className='h-screen flex items-center justify-center'>
@@ -43,13 +65,14 @@ export function Login() {
         <div className='flex flex-1 bg-white'>
           <div className='m-auto w-[80%]'>
             <h1 className='text-3xl font-semibold mb-4'>Sign in</h1>
+            {message && <p className='text-red-500 mb-2 text-lg'>{message}</p>}
             <p>If you don't have an account.</p>
             <span className='inline-block mr-2'>You can</span>
-            <Link to='/register' className='text-[#5067f7] font-semibold'>
+            <Link to='/auth/register' className='text-[#5067f7] font-semibold'>
               Register here!
             </Link>
             <form className='mt-6' onSubmit={handleSubmit(handleLogin)}>
-              <div className='mb-8'>
+              <div className=''>
                 <label className='font-semibold' htmlFor=''>
                   Email
                 </label>
@@ -61,6 +84,7 @@ export function Login() {
                       {...field}
                       size='large'
                       placeholder='Enter your email address'
+                      type='email'
                       prefix={<MailOutlined />}
                       className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
                     />
@@ -69,7 +93,7 @@ export function Login() {
                 {errors.email && <Text type='danger'>{errors.email.message}</Text>}
               </div>
 
-              <div className='mb-8'>
+              <div className='mt-8'>
                 <label className='font-semibold' htmlFor=''>
                   Password
                 </label>
@@ -89,13 +113,19 @@ export function Login() {
                 />
                 {errors.password && <Text type='danger'>{errors.password.message}</Text>}
               </div>
+              <p className='text-right text-red-500 hover:underline '>
+                <Link to={'/auth/forgot-password'} className='hover:text-red-500'>Forgot password?</Link>
+              </p>
+             
               <Button
-                type='primary'
-                htmlType='submit'
-                className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800'
-              >
-                Login
-              </Button>
+                  type='primary'
+                  htmlType='submit'
+                  disabled={loading}
+                  className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
+         disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
+                >
+                  {loading ? <Spin className='text-rose-600' /> : 'Login'}
+                </Button>
             </form>
           </div>
         </div>
