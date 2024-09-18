@@ -67,7 +67,7 @@ export function Register() {
         <div className='hidden lg:block w-[60%] h-full'>
           <img src={authBg} alt='Auth Background' className='object-cover h-full w-full' />
         </div>
-        { !error ? (
+        {message && !error ? (
           <Result
             className='flex-1 animate-fadeIn'
             status='success'
@@ -175,7 +175,7 @@ export function Register() {
                   htmlType='submit'
                   disabled={loading}
                   className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-         disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
+                disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
                 >
                   {loading ? <Spin className='text-rose-600' /> : 'Register'}
                 </Button>

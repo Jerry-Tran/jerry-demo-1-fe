@@ -3,3 +3,4 @@ export * from './Login'
 export * from "./ConfirmEmail"
 export * from "./ForgotPassword"
 export * from "./VerifyOtp"
+export * from "./NewPassword"

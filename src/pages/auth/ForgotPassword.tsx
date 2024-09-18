@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-import { Button, Input, Spin, Typography } from 'antd'
-import { MailOutlined } from '@ant-design/icons'
+import { useDispatch, useSelector } from 'react-redux'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 
+import { Button, Input, Result, Spin, Typography } from 'antd'
+import { MailOutlined } from '@ant-design/icons'
+
+import { resetMessage } from '@/store/slices'
+
 import { forgotPasswordService, verifyOtpService, resetPasswordService } from '@/services'
 
 import { VerifyOtp } from './VerifyOtp'
-
-import { resetMessage } from '@/store/slices'
+import { Newpassword } from './NewPassword'
 
 import authBg from '@/assets/images/forgot-password-bg.png'
 
@@ -23,23 +26,17 @@ const emailSchema = yup.object().shape({
   email: yup.string().email('Please input a valid Email!').required('Please input your Email!')
 })
 
-const passwordSchema = yup.object().shape({
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 6 characters long')
-    .required('Please input your new password!'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Please confirm your new password!')
-})
-
 export function ForgotPassword() {
   const dispatch = useDispatch()
-  const { message } = useSelector((state) => state.auth)
+
+  const { message, error } = useSelector((state) => state.auth)
 
   const [loading, setLoading] = useState<boolean>(false)
+
   const [showOtp, setShowOtp] = useState<boolean>(false)
+
+  const [showResult, setShowResult] = useState<boolean>(false)
+
   const [showNewPasswordForm, setShowNewPasswordForm] = useState<boolean>(false)
 
   const {
@@ -47,29 +44,36 @@ export function ForgotPassword() {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: yupResolver(showNewPasswordForm ? passwordSchema : emailSchema)
+    resolver: yupResolver(emailSchema)
   })
 
   const handleForgotPassword = async (data: any) => {
     setLoading(true)
-    await dispatch(forgotPasswordService(data.email))
+    const result = await dispatch(forgotPasswordService(data.email))
     setLoading(false)
-    localStorage.setItem('curr_email', data.email)
-    setShowOtp(true)
+    if (!result?.error) {
+      localStorage.setItem('curr_email', data.email)
+      setShowOtp(true)
+    }
   }
 
   const handleVerifyOtp = async (otp: string) => {
     const payload = { email: localStorage.getItem('curr_email'), otp }
     setLoading(true)
-    await dispatch(verifyOtpService(payload))
+    const result = await dispatch(verifyOtpService(payload))
     setLoading(false)
-    setShowNewPasswordForm(true)
+    if (!result?.error) {
+      setShowNewPasswordForm(true)
+    }
   }
 
   const handleResetPassword = async (data: any) => {
     const payload = { email: localStorage.getItem('curr_email'), password: data.password }
     setLoading(true)
-    await dispatch(resetPasswordService(payload))
+    const result = await dispatch(resetPasswordService(payload))
+    if (!result.error) {
+      setShowResult(true)
+    }
     setLoading(false)
   }
 
@@ -84,7 +88,7 @@ export function ForgotPassword() {
           <img src={authBg} alt='Auth Background' className='object-cover h-full w-full' />
         </div>
         <div className='flex flex-1 bg-white'>
-          <div className='m-auto w-[80%]'>
+          <div className={`m-auto ${showOtp && showResult && !showNewPasswordForm ? 'w-full' : 'w-[80%]'}`}>
             {!showOtp && !showNewPasswordForm && (
               <>
                 <h1 className='text-3xl font-semibold mb-4'>Forgot password</h1>
@@ -125,61 +129,22 @@ export function ForgotPassword() {
               </>
             )}
 
-            {showOtp && !showNewPasswordForm && <VerifyOtp onVerifyOtp={handleVerifyOtp} />}
-
-            {showNewPasswordForm && (
-              <>
-                <h1 className='text-3xl font-semibold mb-4'>Reset Password</h1>
-                <form className='mt-4' onSubmit={handleSubmit(handleResetPassword)}>
-                  <div className=''>
-                    <label className='font-semibold' htmlFor='password'>
-                      New Password
-                    </label>
-                    <Controller
-                      name='password'
-                      control={control}
-                      render={({ field }) => (
-                        <Input.Password
-                          {...field}
-                          size='large'
-                          placeholder='Enter new password'
-                          className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                        />
-                      )}
-                    />
-                    {errors.password && <Text type='danger'>{errors.password.message}</Text>}
-                  </div>
-
-                  <div className='mt-4'>
-                    <label className='font-semibold' htmlFor='confirmPassword'>
-                      Confirm Password
-                    </label>
-                    <Controller
-                      name='confirmPassword'
-                      control={control}
-                      render={({ field }) => (
-                        <Input.Password
-                          {...field}
-                          size='large'
-                          placeholder='Confirm your new password'
-                          className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                        />
-                      )}
-                    />
-                    {errors.confirmPassword && <Text type='danger'>{errors.confirmPassword.message}</Text>}
-                  </div>
-
-                  <Button
-                    type='primary'
-                    htmlType='submit'
-                    disabled={loading}
-                    className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-             disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
+            {showOtp && !showNewPasswordForm && <VerifyOtp loading={loading} onVerifyOtp={handleVerifyOtp} />}
+            {showNewPasswordForm && !showResult && <Newpassword loading={loading} handleResetPassword={handleResetPassword} />}
+            {showResult && (
+              <Result
+                className='flex-1 p-0 animate-fadeIn'
+                status='success'
+                title='Reset password successfully. Please login again!!'
+                extra={[
+                  <Link
+                    to='/auth/login'
+                    className='bg-[#52c41a] px-4 py-3 font-bold rounded-md text-white hover:text-white hover:opacity-80'
                   >
-                    {loading ? <Spin className='text-rose-600' /> : 'Reset Password'}
-                  </Button>
-                </form>
-              </>
+                    Login
+                  </Link>
+                ]}
+              />
             )}
           </div>
         </div>

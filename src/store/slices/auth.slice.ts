@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { registerService, confirmEmailService, loginService, logoutService, forgotPasswordService } from '@/services'
+import * as authService from '@/services'
 
 const initialState = {
   isLoggedIn: false,
@@ -25,40 +25,50 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerService.fulfilled, (state, action) => {
+      .addCase(authService.registerService.fulfilled, (state, action) => {
         const { message } = action.payload
         state.message = message
       })
-      .addCase(registerService.rejected, (state, action) => {
+      .addCase(authService.registerService.rejected, (state, action) => {
         const { message, errorCode } = action.payload.response.data
         state.error = errorCode
         state.message = message
       })
-      .addCase(loginService.fulfilled, (state, action) => {
+      .addCase(authService.loginService.fulfilled, (state, action) => {
         const { message, currentUser } = action.payload
         state.isLoggedIn = true
         state.message = message
         state.currentUser = currentUser
       })
-      .addCase(loginService.rejected, (state, action) => {
+      .addCase(authService.loginService.rejected, (state, action) => {
         const { message, errorCode } = action.payload.response.data
         state.error = errorCode
         state.message = message
       })
-      .addCase(confirmEmailService.fulfilled, (state, action) => {
+      .addCase(authService.confirmEmailService.fulfilled, (state, action) => {
         const { message } = action.payload
         state.message = message
       })
-      .addCase(confirmEmailService.rejected, (state, action) => {
+      .addCase(authService.confirmEmailService.rejected, (state, action) => {
         const { message, errorCode } = action.payload.response.data
         state.error = errorCode
         state.message = message
       })
-      .addCase(logoutService.fulfilled, (state) => {
+      .addCase(authService.logoutService.fulfilled, (state) => {
         state.currentUser = null
         state.isLoggedIn = false
       })
-      .addCase(forgotPasswordService.rejected, (state, action) => {
+      .addCase(authService.forgotPasswordService.rejected, (state, action) => {
+        const { message, errorCode } = action.payload.response.data
+        state.error = errorCode
+        state.message = message
+      })
+      .addCase(authService.verifyOtpService.rejected, (state, action) => {
+        const { message, errorCode } = action.payload.response.data
+        state.error = errorCode
+        state.message = message
+      })
+      .addCase(authService.resetPasswordService.rejected, (state, action) => {
         const { message, errorCode } = action.payload.response.data
         state.error = errorCode
         state.message = message
