@@ -1,66 +1,71 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import * as authApi from '@/apis'
+import { authApi } from '@/apis'
 
-export const registerService = createAsyncThunk('auth/register', async (userData, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiRegister(userData)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+import { ILoginData, IRegisterData, IResetPasswordData, IVerifyOTP } from '@/interfaces'
 
-export const confirmEmailService = createAsyncThunk('auth/confirm-email', async (id, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiConfirmEmail(id)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+export const authService = {
+  register: createAsyncThunk('auth/register', async (userData: IRegisterData, { rejectWithValue }) => {
+    try {
+      const response = await authApi.register(userData)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
 
-export const loginService = createAsyncThunk('auth/login', async (loginData, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiLogin(loginData)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+  confirmEmail: createAsyncThunk('auth/confirm-email', async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await authApi.confirmEmail(id)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
 
-export const logoutService = createAsyncThunk('/auth/logout', async (_, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiLogout()
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+  login: createAsyncThunk('auth/login', async (loginData: ILoginData, { rejectWithValue }) => {
+    try {
+      const response = await authApi.login(loginData)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
 
-export const forgotPasswordService = createAsyncThunk('/auth/forgot-password', async (email, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiForgotPassword(email)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+  logout: createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+    try {
+      const response = await authApi.logout()
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
 
-export const verifyOtpService = createAsyncThunk('/auth/verify-otp', async (data, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiVerifyOtp(data)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+  forgotPassword: createAsyncThunk('auth/forgot-password', async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await authApi.forgotPassword(email)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
 
-export const resetPasswordService = createAsyncThunk('/auth/reset-password', async (data, { rejectWithValue }) => {
-  try {
-    const response = await authApi.apiResetPassword(data)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
+  verifyOtp: createAsyncThunk('auth/verify-otp', async (data: IVerifyOTP, { rejectWithValue }) => {
+    try {
+      const response = await authApi.verifyOtp(data)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
+
+  resetPassword: createAsyncThunk('auth/reset-password', async (data: IResetPasswordData, { rejectWithValue }) => {
+    try {
+      const response = await authApi.resetPassword(data)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  })
+}

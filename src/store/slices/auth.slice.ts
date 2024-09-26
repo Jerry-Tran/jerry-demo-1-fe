@@ -1,8 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import * as authService from '@/services'
+import { authService } from '@/services'
 
-const initialState = {
+import { ILoginPayload, IRegisterPayload } from '@/interfaces'
+
+type AuthState = {
+  isLoggedIn: boolean
+  currentUser: null | object
+  status: string
+  error: string | null
+  message: string
+}
+
+const initialState: AuthState = {
   isLoggedIn: false,
   currentUser: null,
   status: 'idle',
@@ -25,51 +36,51 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(authService.registerService.fulfilled, (state, action) => {
+      .addCase(authService.register.fulfilled, (state, action: PayloadAction<IRegisterPayload>) => {
         const { message } = action.payload
         state.message = message
       })
-      .addCase(authService.registerService.rejected, (state, action) => {
-        const { message, errorCode } = action.payload.response.data
+      .addCase(authService.register.rejected, (state, action: PayloadAction<any>) => {
+        const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
       })
-      .addCase(authService.loginService.fulfilled, (state, action) => {
+      .addCase(authService.login.fulfilled, (state, action: PayloadAction<ILoginPayload>) => {
         const { message, currentUser } = action.payload
         state.isLoggedIn = true
         state.message = message
         state.currentUser = currentUser
       })
-      .addCase(authService.loginService.rejected, (state, action) => {
-        const { message, errorCode } = action.payload.response.data
+      .addCase(authService.login.rejected, (state, action: PayloadAction<any>) => {
+        const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
       })
-      .addCase(authService.confirmEmailService.fulfilled, (state, action) => {
+      .addCase(authService.confirmEmail.fulfilled, (state, action) => {
         const { message } = action.payload
         state.message = message
       })
-      .addCase(authService.confirmEmailService.rejected, (state, action) => {
-        const { message, errorCode } = action.payload.response.data
+      .addCase(authService.confirmEmail.rejected, (state, action: PayloadAction<any>) => {
+        const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
       })
-      .addCase(authService.logoutService.fulfilled, (state) => {
+      .addCase(authService.logout.fulfilled, (state) => {
         state.currentUser = null
         state.isLoggedIn = false
       })
-      .addCase(authService.forgotPasswordService.rejected, (state, action) => {
-        const { message, errorCode } = action.payload.response.data
+      .addCase(authService.forgotPassword.rejected, (state, action: PayloadAction<any>) => {
+        const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
       })
-      .addCase(authService.verifyOtpService.rejected, (state, action) => {
-        const { message, errorCode } = action.payload.response.data
+      .addCase(authService.verifyOtp.rejected, (state, action: PayloadAction<any>) => {
+        const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
       })
-      .addCase(authService.resetPasswordService.rejected, (state, action) => {
-        const { message, errorCode } = action.payload.response.data
+      .addCase(authService.resetPassword.rejected, (state, action: PayloadAction<any>) => {
+        const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
       })

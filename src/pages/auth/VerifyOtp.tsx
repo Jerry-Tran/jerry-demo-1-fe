@@ -9,17 +9,25 @@ import { useForm, Controller } from 'react-hook-form'
 import { Button, Input, Row, Col, Spin } from 'antd'
 
 import { resetMessage } from '@/store/slices'
+import { AppDispatch, RootState } from '@/store'
+
+type VerifyOtpProps = {
+  loading: boolean
+  onVerifyOtp: (otp: string) => void
+}
+type FormData = {
+  otp: string[]
+}
 
 const otpSchema = yup.object().shape({
-  otp: yup.array().length(6, 'dsadas').of(yup.string().required('Otp must have fill full'))
+  otp: yup.array().required().length(6).of(yup.string().required('Otp must have fill full'))
 })
+export function VerifyOtp({ loading, onVerifyOtp }: VerifyOtpProps) {
+  const dispatch = useDispatch<AppDispatch>()
 
-export function VerifyOtp({ loading, onVerifyOtp }) {
+  const { message } = useSelector((state: RootState) => state.auth)
 
-  const dispatch = useDispatch()
-
-  const { message } = useSelector((state) => state.auth)
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const inputs = useRef<any[]>([])
 
   const {
@@ -40,12 +48,12 @@ export function VerifyOtp({ loading, onVerifyOtp }) {
     dispatch(resetMessage())
   }, [dispatch])
 
-  const otpValue = watch('otp')
+  const otpValue = watch('otp') || []
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const { value } = e.target
     if (/^[0-9]{0,1}$/.test(value)) {
-      const otp = getValues('otp')
+      const otp = getValues('otp') || []
       otp[index] = value
       setValue('otp', otp)
       if (value && index < otp.length - 1) {
@@ -81,7 +89,7 @@ export function VerifyOtp({ loading, onVerifyOtp }) {
     e.target.select()
   }
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FormData) => {
     const otpValue = data.otp.join('')
     onVerifyOtp(otpValue)
   }
@@ -103,9 +111,9 @@ export function VerifyOtp({ loading, onVerifyOtp }) {
             {Array(6)
               .fill(0)
               .map((_, index) => (
-                <Col key={index}>
+                <Col key={`otp.${index}`}>
                   <Controller
-                    name={`otp[${index}]`}
+                    name={`otp.${index}`}
                     control={control}
                     render={() => (
                       <Input
@@ -125,7 +133,9 @@ export function VerifyOtp({ loading, onVerifyOtp }) {
               ))}
           </Row>
 
-          {errors.otp && <p className='text-left text-red-500 mt-2'>{errors.otp[errors.otp.length - 1].message}</p>}
+          {errors.otp && Array.isArray(errors.otp) && errors.otp.length > 0 && (
+            <p className='text-left text-red-500 mt-2'>{errors.otp[errors.otp.length - 1].message}</p>
+          )}
 
           <Button
             type='primary'

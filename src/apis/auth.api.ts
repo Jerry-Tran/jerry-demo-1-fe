@@ -1,42 +1,32 @@
 import { instance as axiosClient } from '@/config'
+import { ILoginData, IRegisterData, IResetPasswordData, IVerifyOTP } from '@/interfaces'
 
-type userData = {
-  name?: string
-  email: string
-  password: string
-}
+export const authApi = {
+  register: async (userData: IRegisterData) => {
+    return await axiosClient.post('/auth/register', userData)
+  },
 
-export const apiRegister = async (userData: userData) => {
-  const response = await axiosClient.post('/auth/register', userData)
-  return response
-}
+  login: async (userData: ILoginData) => {
+    return await axiosClient.post('/auth/login', userData)
+  },
 
-export const apiLogin = async (userData: userData) => {
-  const response = await axiosClient.post('/auth/login', userData)
-  return response
-}
+  confirmEmail: async (id: string) => {
+    return await axiosClient.post('auth/confirm', { id })
+  },
 
-export const apiConfirmEmail = async (id: string) => {
-  const response = await axiosClient.post('auth/confirm', { id })
-  return response
-}
+  logout: async () => {
+    return await axiosClient.post('/auth/logout')
+  },
 
-export const apiLogout = async () => {
-  const response = await axiosClient.post('/auth/logout')
-  return response
-}
+  forgotPassword: async (email: string) => {
+    return await axiosClient.post('/auth/forgot-password', { email })
+  },
 
-export const apiForgotPassword = async (email: string) => {
-  const response = await axiosClient.post('/auth/forgot-password', { email })
-  return response
-}
+  verifyOtp: async (data: IVerifyOTP) => {
+    return await axiosClient.post('/auth/verify-otp', data)
+  },
 
-export const apiVerifyOtp = async (data) => {
-  const response = await axiosClient.post('/auth/verify-otp', data)
-  return response
-}
-
-export const apiResetPassword = async (data) => {
-  const response = await axiosClient.post('/auth/reset-password', data)
-  return response
+  resetPassword: async (data: IResetPasswordData) => {
+    return await axiosClient.post('/auth/reset-password', data)
+  }
 }

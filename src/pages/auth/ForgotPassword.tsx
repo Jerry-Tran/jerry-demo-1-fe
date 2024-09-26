@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
 
@@ -8,17 +8,25 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 
-import { Button, Input, Result, Spin, Typography } from 'antd'
+import { Button, Input, Result, Spin, Typography, message } from 'antd'
 import { MailOutlined } from '@ant-design/icons'
 
+import { AppDispatch, RootState } from '@/store'
 import { resetMessage } from '@/store/slices'
 
-import { forgotPasswordService, verifyOtpService, resetPasswordService } from '@/services'
+import { authService } from '@/services'
+
+import authBg from '@/assets/images/forgot-password-bg.png'
 
 import { VerifyOtp } from './VerifyOtp'
 import { Newpassword } from './NewPassword'
+import { useBoolean } from '@/hooks'
+import { localStorageKeys } from '@/utils/constants'
 
-import authBg from '@/assets/images/forgot-password-bg.png'
+type ResetPasswordData = {
+  password: string
+  confirmPassword: string
+}
 
 const { Text } = Typography
 
@@ -27,17 +35,17 @@ const emailSchema = yup.object().shape({
 })
 
 export function ForgotPassword() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
-  const { message, error } = useSelector((state) => state.auth)
+  const { message: msg } = useSelector((state: RootState) => state.auth)
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const { value: showOtp, setTrue: setShowOtp } = useBoolean(false)
 
-  const [showOtp, setShowOtp] = useState<boolean>(false)
+  const { value: showResult, setTrue: setShowResult } = useBoolean(false)
 
-  const [showResult, setShowResult] = useState<boolean>(false)
+  const { value: showNewPasswordForm, setTrue: setShowNewPasswordForm } = useBoolean(false)
 
-  const [showNewPasswordForm, setShowNewPasswordForm] = useState<boolean>(false)
+  const { value: loading, setTrue: setLoading, setFalse: setUnloading } = useBoolean(false)
 
   const {
     control,
@@ -47,34 +55,55 @@ export function ForgotPassword() {
     resolver: yupResolver(emailSchema)
   })
 
-  const handleForgotPassword = async (data: any) => {
-    setLoading(true)
-    const result = await dispatch(forgotPasswordService(data.email))
-    setLoading(false)
-    if (!result?.error) {
-      localStorage.setItem('curr_email', data.email)
-      setShowOtp(true)
+  const handleForgotPassword = async (data: { email: string }) => {
+    setLoading()
+    try {
+      await dispatch(authService.forgotPassword(data.email))
+      localStorage.setItem(localStorageKeys.currentEmail, data.email)
+      setShowOtp()
+    } catch (error) {
+      message.error('Forgot password failed: ' + (error as Error).message)
     }
+    setUnloading()
   }
 
   const handleVerifyOtp = async (otp: string) => {
-    const payload = { email: localStorage.getItem('curr_email'), otp }
-    setLoading(true)
-    const result = await dispatch(verifyOtpService(payload))
-    setLoading(false)
-    if (!result?.error) {
-      setShowNewPasswordForm(true)
+    const payload = { email: localStorage.getItem(localStorageKeys.currentEmail) || '', otp }
+
+    if (!payload.email) {
+      message.error('Not found email')
+      return
     }
+
+    setLoading()
+    try {
+      await dispatch(authService.verifyOtp(payload))
+      setShowNewPasswordForm()
+    } catch (error) {
+      message.error('Verify OTP failed: ' + (error as Error).message)
+    }
+    setUnloading()
   }
 
-  const handleResetPassword = async (data: any) => {
-    const payload = { email: localStorage.getItem('curr_email'), password: data.password }
-    setLoading(true)
-    const result = await dispatch(resetPasswordService(payload))
-    if (!result.error) {
-      setShowResult(true)
+  const handleResetPassword = async (data: ResetPasswordData) => {
+    const payload = {
+      email: localStorage.getItem(localStorageKeys.currentEmail) || '',
+      password: String(data.password)
     }
-    setLoading(false)
+    if (!payload.email) {
+      message.error('Not found email')
+      return
+    }
+
+    setLoading()
+
+    try {
+      await dispatch(authService.resetPassword(payload))
+      setShowResult()
+    } catch (error) {
+      message.error('Reset password failed: ' + (error as Error).message)
+    }
+    setUnloading()
   }
 
   useEffect(() => {
@@ -92,7 +121,7 @@ export function ForgotPassword() {
             {!showOtp && !showNewPasswordForm && (
               <>
                 <h1 className='text-3xl font-semibold mb-4'>Forgot password</h1>
-                {message && <p className='text-red-500 mb-2 text-lg'>{message}</p>}
+                {msg && <p className='text-red-500 mb-2 text-lg'>{msg}</p>}
                 <p>Please fill your email!</p>
                 <form className='mt-4' onSubmit={handleSubmit(handleForgotPassword)}>
                   <div className=''>
@@ -130,7 +159,9 @@ export function ForgotPassword() {
             )}
 
             {showOtp && !showNewPasswordForm && <VerifyOtp loading={loading} onVerifyOtp={handleVerifyOtp} />}
-            {showNewPasswordForm && !showResult && <Newpassword loading={loading} handleResetPassword={handleResetPassword} />}
+            {showNewPasswordForm && !showResult && (
+              <Newpassword loading={loading} handleResetPassword={handleResetPassword} />
+            )}
             {showResult && (
               <Result
                 className='flex-1 p-0 animate-fadeIn'
@@ -138,7 +169,7 @@ export function ForgotPassword() {
                 title='Reset password successfully. Please login again!!'
                 extra={[
                   <Link
-                    to='/auth/login'
+                    to='/login'
                     className='bg-[#52c41a] px-4 py-3 font-bold rounded-md text-white hover:text-white hover:opacity-80'
                   >
                     Login

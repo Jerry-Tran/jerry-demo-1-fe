@@ -8,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form'
 
 import { Button, Input, Spin, Typography } from 'antd'
 
+import { RootState } from '@/store'
 import { resetMessage } from '@/store/slices'
 
 const { Text } = Typography
@@ -21,12 +22,19 @@ const passwordSchema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Passwords must match')
     .required('Please confirm your new password!')
 })
+type ResetPasswordData = {
+  password: string
+  confirmPassword: string
+}
+type NewPasswordProps = {
+  loading: boolean
+  handleResetPassword: (data: ResetPasswordData) => Promise<void>
+}
 
-export function Newpassword({loading, handleResetPassword }) {
-
+export function Newpassword({ loading, handleResetPassword }: NewPasswordProps) {
   const dispatch = useDispatch()
 
-  const { message } = useSelector((state) => state.auth)
+  const { message } = useSelector((state: RootState) => state.auth)
 
   const {
     control,

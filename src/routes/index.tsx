@@ -1,10 +1,8 @@
-import React from 'react'
-
 import { createBrowserRouter } from 'react-router-dom'
 
 import { AuthLayout, DefaultLayout, SystemLayout } from '@/layouts'
 
-import { Register, Login, ConfirmEmail, Home, ForgotPassword, VerifyOtp } from '@/pages'
+import { Register, Login, ConfirmEmail, Home, ForgotPassword } from '@/pages'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -17,28 +15,24 @@ export const router = createBrowserRouter([
     ]
   },
   {
-    path: '/auth',
+    path: '/',
     element: <AuthLayout />,
     children: [
       {
-        path: '/auth/login',
+        path: '/login',
         element: <Login />
       },
       {
-        path: '/auth/register',
+        path: '/register',
         element: <Register />
       },
       {
-        path: '/auth/confirm-email/:id',
+        path: '/confirm-email/:id',
         element: <ConfirmEmail />
       },
       {
-        path: '/auth/forgot-password',
+        path: '/forgot-password',
         element: <ForgotPassword />
-      },
-      {
-        path: '/auth/verify-otp',
-        element: <VerifyOtp />
       }
     ]
   },

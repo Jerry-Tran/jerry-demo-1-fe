@@ -10,14 +10,14 @@ const commonConfig = {
   storage
 }
 
-const historyConfig = {
+const authPersistConfig = {
   ...commonConfig,
   key: 'authData',
   whitelist: ['isLoggedIn']
 }
 
 const rootReducer = combineReducers({
-  auth: persistReducer(historyConfig, authReducer)
+  auth: persistReducer(authPersistConfig, authReducer)
 })
 
 export default rootReducer

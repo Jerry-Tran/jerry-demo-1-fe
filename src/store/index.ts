@@ -1,9 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-
 import { persistStore } from 'redux-persist'
-
-import { thunk } from 'redux-thunk'
-
 import rootReducer from './reducer/root.reducer'
 
 const reduxStore = () => {
@@ -11,11 +7,18 @@ const reduxStore = () => {
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        serializableCheck: false
-      }).concat(thunk)
+        serializableCheck: {
+          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
+        }
+      })
   })
+
   const persistor = persistStore(store)
+
   return { store, persistor }
 }
 
+export type RootState = ReturnType<typeof rootReducer>
+
+export type AppDispatch = ReturnType<typeof reduxStore>['store']['dispatch']
 export default reduxStore
