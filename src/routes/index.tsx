@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
-
 import { AuthLayout, DefaultLayout, SystemLayout } from '@/layouts'
-
 import { Register, Login, ConfirmEmail, Home, ForgotPassword } from '@/pages'
+import { Dashboard, ManageUsers } from '@/pages/admin'
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -10,7 +10,8 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Home />
+        element: <Home />,
+        handle: { breadcrumb: 'Home' }
       }
     ]
   },
@@ -33,16 +34,26 @@ export const router = createBrowserRouter([
       {
         path: '/forgot-password',
         element: <ForgotPassword />
+      },
+      {
+        path: '/admin/login',
+        element: <Login />
       }
     ]
   },
   {
-    path: '/admin',
+    path: '/',
     element: <SystemLayout />,
     children: [
       {
         path: '/admin',
-        element: <Login />
+        element: <Dashboard />,
+        handle: { breadcrumb: 'Dashboard' }
+      },
+      {
+        path: '/admin/users',
+        element: <ManageUsers />,
+        handle: { breadcrumb: 'Manage Users' }
       }
     ]
   }
