@@ -5,7 +5,9 @@ export default {
     extend: {
       colors: {
         'primary-800': '#0A2FB6',
-        'primary-500': '#365ff5'
+        'primary-500': '#365ff5',
+        'system-primary': '#fafafa',
+        'system-text': '#bfbfbf'
       }
     },
     keyframes: {
