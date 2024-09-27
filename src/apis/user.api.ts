@@ -1,11 +1,11 @@
 import { instance as axiosClient } from '@/config'
+
+import { IPaginationParams } from '@/interfaces'
+
 export const userApi = {
-  getUsers: async (page: number, limit: number) => {
+  getUsers: async (query: IPaginationParams) => {
     return await axiosClient.get('/users', {
-      params: {
-        page,
-        limit
-      }
+      params: query
     })
   }
 }
