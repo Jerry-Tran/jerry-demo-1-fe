@@ -1,10 +1,15 @@
 export interface IRegisterPayload {
   message: string
 }
-
+export interface ICurrentUser {
+  id: string
+  name: string
+  role: string
+  email: string
+}
 export interface ILoginPayload {
   message: string
-  currentUser: object
+  currentUser: ICurrentUser
 }
 
 export interface IErrorPayload {

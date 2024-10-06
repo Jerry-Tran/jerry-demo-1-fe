@@ -7,5 +7,8 @@ export const userApi = {
     return await axiosClient.get('/users', {
       params: query
     })
+  },
+  getCurrentUser: async () => {
+    return await axiosClient.get('/users/currentUser')
   }
 }
