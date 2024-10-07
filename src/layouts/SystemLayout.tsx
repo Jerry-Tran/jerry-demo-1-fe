@@ -16,7 +16,8 @@ import { useSelector } from 'react-redux'
 const { Content } = Layout
 
 const contentStyle: React.CSSProperties = {
-  backgroundColor: '#fafafa'
+  backgroundColor: '#fafafa',
+  overflowY: 'scroll'
 }
 
 const layoutStyle = {
