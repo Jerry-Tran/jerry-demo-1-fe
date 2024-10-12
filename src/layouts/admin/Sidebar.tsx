@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 import { BiSolidUserAccount, FaUsers, ImProfile, TbLayoutDashboardFilled } from '@/utils/icons'
-import logo from '../../assets/images/logo.jpg'
+import logo from '@/assets/images/secure.png'
 
 const { Sider } = Layout
 
@@ -24,9 +24,9 @@ const sideBarMenu = [
   },
   {
     key: '3',
-    to: '/admin/accounts',
+    to: '/admin/workspaces',
     icon: <BiSolidUserAccount />,
-    text: 'Accounts'
+    text: 'Workspaces'
   },
   {
     key: '4',
@@ -39,12 +39,9 @@ const sideBarMenu = [
 const menuItems = sideBarMenu.map((item) => ({
   key: item.key,
   label: (
-    <NavLink
-      to={item.to}
-      className={({ isActive }) => `flex items-center w-full`}
-    >
-      <span className={`text-xl text-primary-500 p-2 rounded-md mr-2 shadow-[0_4px_6px_rgb(0_0_0_/_12%)`}>{item.icon}</span>
-      <span className='text-system-text font- text-md'>{item.text}</span>
+    <NavLink to={item.to} className={`flex items-center w-full`}>
+      <span className='text-2xl text-primary-500 p-2 rounded-md mr-2'>{item.icon}</span>
+      <span className='text-slate-600 font-normal text-lg'>{item.text}</span>
     </NavLink>
   ),
   style: { marginBottom: '15px' }
@@ -54,10 +51,15 @@ export function Sidebar() {
   return (
     <Sider style={siderStyle} className='bg-system-primary'>
       <div className='flex items-center m-4'>
-        <img src={logo} alt='logo' className='w-[30px] h-[30px] mx-1' />
-        <span className='text-lg text-primary-500'>Go Dashboard</span>
+        <img src={logo} alt='logo' className='w-12' />
+        <h2 className='text-2xl font-bold text-blue-600'>GoPass</h2>
       </div>
-      <Menu className='bg-system-primary' mode='vertical' items={menuItems} />
+      <Menu
+        className='bg-system-primary'
+        mode='vertical'
+        items={menuItems}
+        defaultSelectedKeys={['1']} 
+      />
     </Sider>
   )
 }
