@@ -6,10 +6,12 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 
-import { Button, Input, Row, Col, Spin } from 'antd'
+import { Button, Input, Row, Col } from 'antd'
 
 import { resetMessage } from '@/store/slices'
 import { AppDispatch, RootState } from '@/store'
+
+import { CustomBtn } from '@/components'
 
 type VerifyOtpProps = {
   loading: boolean
@@ -100,11 +102,11 @@ export function VerifyOtp({ loading, onVerifyOtp }: VerifyOtpProps) {
         <header className='mb-8'>
           <h1 className='text-2xl font-bold mb-1'>Verify Your Account</h1>
           {message && <p className='text-red-500 mb-2 text-lg'>{message}</p>}
-          <p className='text-[15px] text-slate-500'>
+          <span className='text-base text-slate-600'>
             A 6-digit OTP code has been sent via your email.
             <br />
             Please enter the code below
-          </p>
+          </span>
         </header>
         <form id='otp-form' onSubmit={handleSubmit(onSubmit)}>
           <Row gutter={12} justify='space-between'>
@@ -125,7 +127,7 @@ export function VerifyOtp({ loading, onVerifyOtp }: VerifyOtpProps) {
                         onPaste={handlePaste}
                         ref={(el) => (inputs.current[index] = el)}
                         maxLength={1}
-                        className='lg:w-[50px] lg:h-[50px] text-center w-[40px] h-[40px]'
+                        className='lg:w-[50px] lg:h-[50px] text-center w-[40px] h-[40px] text-base'
                       />
                     )}
                   />
@@ -134,23 +136,15 @@ export function VerifyOtp({ loading, onVerifyOtp }: VerifyOtpProps) {
           </Row>
 
           {errors.otp && Array.isArray(errors.otp) && errors.otp.length > 0 && (
-            <p className='text-left text-red-500 mt-2'>{errors.otp[errors.otp.length - 1].message}</p>
+            <p className='text-left text-base font-normal text-red-500 mt-2'>{errors.otp[errors.otp.length - 1].message}</p>
           )}
 
-          <Button
-            type='primary'
-            htmlType='submit'
-            disabled={loading}
-            className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-            disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
-          >
-            {loading ? <Spin className='text-rose-600' /> : 'Send'}
-          </Button>
+          <CustomBtn title='Send' type='primary' htmlType='submit' disabled={loading} />
         </form>
 
-        <div className='text-sm text-slate-500 mt-4'>
+        <div className='text-base text-slate-500 mt-4'>
           Didn't receive the OTP?
-          <Button type='link' className='font-medium' onClick={() => {}}>
+          <Button type='link' className='font-medium text-base'>
             Resend OTP
           </Button>
         </div>

@@ -4,12 +4,11 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Button, Input, Spin, Typography, message } from 'antd'
-import { MailOutlined, LockOutlined } from '@ant-design/icons'
+import { Form, message } from 'antd'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
 import { authService } from '@/services'
 
@@ -20,9 +19,11 @@ import { useBoolean } from '@/hooks'
 
 import { ILoginData } from '@/interfaces'
 
-import authBg from '@/assets/images/auth-bg.png'
+import { authFields } from '@/utils/constants'
 
-const { Text } = Typography
+import { CustomBtn, CustomInput } from '@/components'
+
+import authBg from '@/assets/images/auth-bg.png'
 
 const schema = yup.object().shape({
   email: yup.string().email('Please input a valid Email!').required('Please input your Email!'),
@@ -45,7 +46,7 @@ export function Login() {
   } = useForm({
     resolver: yupResolver(schema)
   })
-
+  const currentPath = window.location.pathname
   const handleLogin = async (data: ILoginData) => {
     try {
       setLoading()
@@ -77,69 +78,37 @@ export function Login() {
           <div className='m-auto w-[80%]'>
             <h1 className='text-3xl font-semibold mb-4'>Sign in</h1>
             {msg && <p className='text-red-500 mb-2 text-lg'>{msg}</p>}
-            <p>If you don't have an account.</p>
-            <span className='inline-block mr-2'>You can</span>
-            <Link to='/register' className='text-[#5067f7] font-semibold'>
-              Register here!
-            </Link>
-            <form className='mt-6' onSubmit={handleSubmit(handleLogin)}>
-              <div className=''>
-                <label className='font-semibold' htmlFor=''>
-                  Email
-                </label>
-                <Controller
-                  name='email'
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      size='large'
-                      placeholder='Enter your email address'
-                      type='email'
-                      prefix={<MailOutlined />}
-                      className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
+            {!currentPath.includes('admin') && (
+              <>
+                <span className='text-lg'>If you don't have an account.</span> <br />
+                <span className='text-lg inline-block mr-2'>You can</span>
+                <Link to='/register' className='text-lg text-blue-500 font-semibold hover:underline'>
+                  Register here!
+                </Link>
+              </>
+            )}
+            <Form className='mt-6' onFinish={handleSubmit(handleLogin)} layout='vertical'>
+              {authFields.map((field) => {
+                if (field.name === 'email' || field.name === 'password')
+                  return (
+                    <CustomInput
+                      key={field.name}
+                      name={field.name}
+                      label={field.label}
+                      control={control}
+                      errors={errors}
+                      placeholder={field.placeholder}
+                      prefixIcon={field.prefixIcon}
                     />
-                  )}
-                />
-                {errors.email && <Text type='danger'>{errors.email.message}</Text>}
-              </div>
-
-              <div className='mt-8'>
-                <label className='font-semibold' htmlFor=''>
-                  Password
-                </label>
-
-                <Controller
-                  name='password'
-                  control={control}
-                  render={({ field }) => (
-                    <Input.Password
-                      {...field}
-                      size='large'
-                      placeholder='Enter your Password'
-                      prefix={<LockOutlined />}
-                      className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                    />
-                  )}
-                />
-                {errors.password && <Text type='danger'>{errors.password.message}</Text>}
-              </div>
-              <p className='text-right text-red-500 hover:underline '>
+                  )
+              })}
+              <button className='w-full text-right text-base font-normal text-red-500 hover:underline'>
                 <Link to={'/forgot-password'} className='hover:text-red-500'>
                   Forgot password?
                 </Link>
-              </p>
-
-              <Button
-                type='primary'
-                htmlType='submit'
-                disabled={loading}
-                className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-         disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
-              >
-                {loading ? <Spin className='text-rose-600' /> : 'Login'}
-              </Button>
-            </form>
+              </button>
+              <CustomBtn title='Login' type='primary' htmlType='submit' disabled={loading} loading={loading} />
+            </Form>
           </div>
         </div>
       </div>
