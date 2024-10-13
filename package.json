@@ -20,6 +20,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ant-design/charts": "^2.2.1",
     "@ant-design/icons": "^5.5.1",
     "@fireworks-js/react": "^2.10.8",
     "@hookform/resolvers": "^3.9.0",

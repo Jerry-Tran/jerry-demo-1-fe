@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { authService } from '@/services'
+import { authService, userService } from '@/services'
 
-import { ILoginPayload, IRegisterPayload } from '@/interfaces'
+import { ICurrentUser, ILoginPayload, IRegisterPayload } from '@/interfaces'
 
 type AuthState = {
   isLoggedIn: boolean
-  currentUser: null | object
+  currentUser: null | ICurrentUser
   status: string
   error: string | null
   message: string
@@ -83,6 +83,12 @@ const authSlice = createSlice({
         const { message, errorCode } = action.payload
         state.error = errorCode
         state.message = message
+      })
+      .addCase(userService.getCurrentUser.fulfilled, (state, action: PayloadAction<any>) => {
+        state.currentUser = action.payload
+      })
+      .addCase(userService.getCurrentUser.rejected, (state) => {
+        state.currentUser = null
       })
   }
 })

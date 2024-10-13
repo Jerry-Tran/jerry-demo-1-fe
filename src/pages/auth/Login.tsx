@@ -34,7 +34,7 @@ export function Login() {
 
   const navigate = useNavigate()
 
-  const { isLoggedIn, message: msg } = useSelector((state: RootState) => state.auth)
+  const { currentUser, message: msg } = useSelector((state: RootState) => state.auth)
 
   const { value: loading, setTrue: setLoading, setFalse: setUnloading } = useBoolean(false)
 
@@ -61,10 +61,11 @@ export function Login() {
   }, [dispatch])
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/')
+    if (currentUser) {
+      if (currentUser.role === 'admin') navigate('/admin')
+      else navigate('/')
     }
-  }, [isLoggedIn, navigate])
+  }, [currentUser, navigate])
 
   return (
     <section className='h-screen flex items-center justify-center'>
