@@ -4,14 +4,17 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
-import { Button, Input, Spin, Typography } from 'antd'
+import { Form } from 'antd'
 
 import { RootState } from '@/store'
 import { resetMessage } from '@/store/slices'
 
-const { Text } = Typography
+import { CustomBtn, CustomInput } from '@/components'
+
+import { authFields } from '@/utils/constants'
+
 const passwordSchema = yup.object().shape({
   password: yup
     .string()
@@ -49,58 +52,26 @@ export function Newpassword({ loading, handleResetPassword }: NewPasswordProps) 
   }, [dispatch])
 
   return (
-    <>
+    <section>
       <h1 className='text-3xl font-semibold mb-4'>Reset Password</h1>
       {message && <p className='text-red-500 mb-2 text-lg'>{message}</p>}
-      <form className='mt-4' onSubmit={handleSubmit(handleResetPassword)}>
-        <div className=''>
-          <label className='font-semibold' htmlFor='password'>
-            New Password
-          </label>
-          <Controller
-            name='password'
-            control={control}
-            render={({ field }) => (
-              <Input.Password
-                {...field}
-                size='large'
-                placeholder='Enter new password'
-                className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
+      <Form className='mt-6' onFinish={handleSubmit(handleResetPassword)} layout='vertical'>
+        {authFields.map((field) => {
+          if (field.name === 'password' || field.name === 'confirmPassword')
+            return (
+              <CustomInput
+                name={field.name}
+                label={field.label}
+                control={control}
+                errors={errors}
+                placeholder={field.placeholder}
+                prefixIcon={field.prefixIcon}
               />
-            )}
-          />
-          {errors.password && <Text type='danger'>{errors.password.message}</Text>}
-        </div>
+            )
+        })}
 
-        <div className='mt-4'>
-          <label className='font-semibold' htmlFor='confirmPassword'>
-            Confirm Password
-          </label>
-          <Controller
-            name='confirmPassword'
-            control={control}
-            render={({ field }) => (
-              <Input.Password
-                {...field}
-                size='large'
-                placeholder='Confirm your new password'
-                className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-              />
-            )}
-          />
-          {errors.confirmPassword && <Text type='danger'>{errors.confirmPassword.message}</Text>}
-        </div>
-
-        <Button
-          type='primary'
-          htmlType='submit'
-          disabled={loading}
-          className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-             disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
-        >
-          {loading ? <Spin className='text-rose-600' /> : 'Reset Password'}
-        </Button>
-      </form>
-    </>
+        <CustomBtn title='Reset Password' type='primary' htmlType='submit' disabled={loading} loading={loading} />
+      </Form>
+    </section>
   )
 }
