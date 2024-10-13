@@ -3,11 +3,17 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif']
+      },
       colors: {
         'primary-800': '#0A2FB6',
         'primary-500': '#365ff5',
         'system-primary': '#fafafa',
         'system-text': '#bfbfbf'
+      },
+      boxShadow: {
+        'custom': '0 0 0 0.2rem #C7D2FE',
       }
     },
     keyframes: {
