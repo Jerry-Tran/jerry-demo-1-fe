@@ -9,6 +9,8 @@ import reduxStore from '@/store'
 
 import App from './App.tsx'
 
+import './sentry.ts'
+
 import './index.css'
 
 const { store, persistor } = reduxStore()

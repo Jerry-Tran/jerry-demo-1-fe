@@ -6,29 +6,31 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
-import { Button, Input, Result, Spin, Typography, message } from 'antd'
+import { Form, Result, message } from 'antd'
 import { MailOutlined } from '@ant-design/icons'
 
 import { AppDispatch, RootState } from '@/store'
 import { resetMessage } from '@/store/slices'
 
+import { useBoolean } from '@/hooks'
+
 import { authService } from '@/services'
+
+import { CustomBtn, CustomInput } from '@/components'
+
+import { localStorageKeys } from '@/utils/constants'
 
 import authBg from '@/assets/images/forgot-password-bg.png'
 
 import { VerifyOtp } from './VerifyOtp'
 import { Newpassword } from './NewPassword'
-import { useBoolean } from '@/hooks'
-import { localStorageKeys } from '@/utils/constants'
 
 type ResetPasswordData = {
   password: string
   confirmPassword: string
 }
-
-const { Text } = Typography
 
 const emailSchema = yup.object().shape({
   email: yup.string().email('Please input a valid Email!').required('Please input your Email!')
@@ -40,11 +42,8 @@ export function ForgotPassword() {
   const { message: msg } = useSelector((state: RootState) => state.auth)
 
   const { value: showOtp, setTrue: setShowOtp } = useBoolean(false)
-
   const { value: showResult, setTrue: setShowResult } = useBoolean(false)
-
   const { value: showNewPasswordForm, setTrue: setShowNewPasswordForm } = useBoolean(false)
-
   const { value: loading, setTrue: setLoading, setFalse: setUnloading } = useBoolean(false)
 
   const {
@@ -57,12 +56,12 @@ export function ForgotPassword() {
 
   const handleForgotPassword = async (data: { email: string }) => {
     setLoading()
-    try {
-      await dispatch(authService.forgotPassword(data.email))
+    const response = await dispatch(authService.forgotPassword(data.email))
+    if (response.meta.requestStatus === 'fulfilled') {
       localStorage.setItem(localStorageKeys.currentEmail, data.email)
       setShowOtp()
-    } catch (error) {
-      message.error('Forgot password failed: ' + (error as Error).message)
+    } else {
+      message.error('Forgot password failed: ')
     }
     setUnloading()
   }
@@ -76,11 +75,11 @@ export function ForgotPassword() {
     }
 
     setLoading()
-    try {
-      await dispatch(authService.verifyOtp(payload))
+    const response = await dispatch(authService.verifyOtp(payload))
+    if (response.meta.requestStatus === 'fulfilled') {
       setShowNewPasswordForm()
-    } catch (error) {
-      message.error('Verify OTP failed: ' + (error as Error).message)
+    } else {
+      message.error('Verify OTP failed')
     }
     setUnloading()
   }
@@ -96,12 +95,11 @@ export function ForgotPassword() {
     }
 
     setLoading()
-
-    try {
-      await dispatch(authService.resetPassword(payload))
+    const response = await dispatch(authService.resetPassword(payload))
+    if (response.meta.requestStatus === 'fulfilled') {
       setShowResult()
-    } catch (error) {
-      message.error('Reset password failed: ' + (error as Error).message)
+    } else {
+      message.error('Reset password failed')
     }
     setUnloading()
   }
@@ -119,43 +117,23 @@ export function ForgotPassword() {
         <div className='flex flex-1 bg-white'>
           <div className={`m-auto ${showOtp && showResult && !showNewPasswordForm ? 'w-full' : 'w-[80%]'}`}>
             {!showOtp && !showNewPasswordForm && (
-              <>
+              <div>
                 <h1 className='text-3xl font-semibold mb-4'>Forgot password</h1>
                 {msg && <p className='text-red-500 mb-2 text-lg'>{msg}</p>}
-                <p>Please fill your email!</p>
-                <form className='mt-4' onSubmit={handleSubmit(handleForgotPassword)}>
-                  <div className=''>
-                    <label className='font-semibold' htmlFor=''>
-                      Email
-                    </label>
-                    <Controller
-                      name='email'
-                      control={control}
-                      render={({ field }) => (
-                        <Input
-                          {...field}
-                          size='large'
-                          placeholder='Enter your email address'
-                          type='email'
-                          prefix={<MailOutlined />}
-                          className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                        />
-                      )}
-                    />
-                    {errors.email && <Text type='danger'>{errors.email.message}</Text>}
-                  </div>
+                <span className='text-lg'>Please fill your email!</span>
 
-                  <Button
-                    type='primary'
-                    htmlType='submit'
-                    disabled={loading}
-                    className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-             disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
-                  >
-                    {loading ? <Spin className='text-rose-600' /> : 'Send'}
-                  </Button>
-                </form>
-              </>
+                <Form className='mt-6' onFinish={handleSubmit(handleForgotPassword)} layout='vertical'>
+                  <CustomInput
+                    name='email'
+                    label='Email'
+                    control={control}
+                    errors={errors}
+                    placeholder='Enter your email'
+                    prefixIcon={<MailOutlined />}
+                  />
+                  <CustomBtn title='Submit' type='primary' htmlType='submit' disabled={loading} loading={loading} />
+                </Form>
+              </div>
             )}
 
             {showOtp && !showNewPasswordForm && <VerifyOtp loading={loading} onVerifyOtp={handleVerifyOtp} />}
