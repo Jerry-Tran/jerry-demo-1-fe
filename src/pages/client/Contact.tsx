@@ -2,7 +2,7 @@ import { Col, Form, Input, Row } from 'antd'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
 import { CustomInput, CustomBtn } from '@/components'
 import { authFields } from '@/utils/constants'
@@ -14,7 +14,8 @@ type SubscribeData = {
 
 const schema = yup.object().shape({
   name: yup.string().required('Please input your name!'),
-  email: yup.string().email('Please input a valid email!').required('Please input your email!')
+  email: yup.string().email('Please input a valid email!').required('Please input your email!'),
+  message: yup.string().required('Please input your message!')
 })
 
 export const Contact = () => {
@@ -39,6 +40,7 @@ export const Contact = () => {
                 return (
                   <CustomInput
                     key={field.name}
+                    size='large'
                     name={field.name}
                     label={field.label}
                     control={control}
@@ -47,15 +49,27 @@ export const Contact = () => {
                   />
                 )
             })}
-            <Form.Item label='Message' name='message' className='font-medium'>
-              <Input.TextArea
-                rows={4}
-                className='text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:shadow-custom'
+            <Form.Item
+              label='Message'
+              name='message'
+              className='font-medium'
+              validateStatus={errors['message'] ? 'error' : ''}
+              help={errors['message']?.message}
+            >
+              <Controller
+                name='message'
+                control={control}
+                render={({ field }) => (
+                  <Input.TextArea
+                    {...field}
+                    rows={4}
+                    className='text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:shadow-custom'
+                  />
+                )}
               />
             </Form.Item>
+            <CustomBtn title='Submit' type='primary' htmlType='submit' />
           </Form>
-
-          <CustomBtn title='Submit' type='primary' htmlType='submit' />
         </Col>
 
         <Col xs={24} md={12} lg={12}>

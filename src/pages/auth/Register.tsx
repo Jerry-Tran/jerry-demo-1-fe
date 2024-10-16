@@ -108,11 +108,12 @@ export function Register() {
                   <CustomInput
                     key={field.name}
                     name={field.name}
+                    size='large'
+                    type={field.type}
                     label={field.label}
                     control={control}
                     errors={errors}
                     placeholder={field.placeholder}
-                    prefixIcon={field.prefixIcon}
                   />
                 ))}
 

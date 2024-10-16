@@ -62,10 +62,11 @@ export function Newpassword({ loading, handleResetPassword }: NewPasswordProps) 
               <CustomInput
                 name={field.name}
                 label={field.label}
+                size='large'
+                type={field.type}
                 control={control}
                 errors={errors}
                 placeholder={field.placeholder}
-                prefixIcon={field.prefixIcon}
               />
             )
         })}
