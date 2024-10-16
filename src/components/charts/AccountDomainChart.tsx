@@ -2,10 +2,14 @@ import { useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Pie } from '@ant-design/charts'
+import { Pie } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, TooltipItem } from 'chart.js'
+
+import { dashboardService } from '@/services'
 
 import { AppDispatch, RootState } from '@/store'
-import { dashboardService } from '@/services'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
 
 export function AccountDomainChart() {
   const dispatch = useDispatch<AppDispatch>()
@@ -18,27 +22,39 @@ export function AccountDomainChart() {
     getChartData()
   }, [dispatch])
 
-  const config = {
-    appendPadding: 10,
-    data: chartDataAccountsOfUsers,
-    angleField: 'value',
-    colorField: 'domain',
-    radius: 0.8,
-    label: {
-      offset: '-30%',
-      content: ({ percent }: { percent: number }) => `${(percent * 100).toFixed(0)}%`,
-      style: {
-        fontSize: 14,
-        textAlign: 'center'
+  const data = {
+    labels: chartDataAccountsOfUsers?.map((item) => item.domain) || [],
+    datasets: [
+      {
+        data: chartDataAccountsOfUsers?.map((item) => item.value) || [],
+        backgroundColor: ['#FF6384', '#36A2EB', '#fa885b', '#FFCE56', '#00cdc7']
+      }
+    ]
+  }
+
+  const options = {
+    plugins: {
+      legend: {
+        position: 'top' as const
+      },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem: TooltipItem<'pie'>) => {
+            return `${tooltipItem.label}: ${tooltipItem.raw}`
+          }
+        }
       }
     },
-    interactions: [{ type: 'element-active' }]
+    responsive: true,
+    maintainAspectRatio: false
   }
 
   return (
     <div className='p-4 shadow-lg bg-white rounded-lg'>
       <h3 className='text-lg font-bold mb-2'>Accounts Of Users</h3>
-      <Pie {...config} />
+      <div style={{ position: 'relative', height: '40vh', width: '40vw' }}>
+        <Pie data={data} options={options} />
+      </div>
     </div>
   )
 }

@@ -10,6 +10,7 @@ type ButtonProps = {
   onClick?: () => void
   disabled?: boolean
   loading?: boolean
+  backgroundColor?: string
   children?: JSX.Element
 }
 
@@ -22,6 +23,7 @@ export const CustomBtn = ({
   onClick,
   disabled = false,
   loading = false,
+  backgroundColor,
   children
 }: ButtonProps) => {
   const btnClass = `w-full h-12 text-lg mt-4 font-semibold rounded-md bg-primary-800
@@ -30,12 +32,26 @@ export const CustomBtn = ({
     ${className}`
 
   return to ? (
-    <Button htmlType={htmlType} type={type} className={btnClass} onClick={onClick} disabled={disabled}>
+    <Button
+      htmlType={htmlType}
+      type={type}
+      className={btnClass}
+      onClick={onClick}
+      disabled={disabled}
+      style={{ backgroundColor }}
+    >
       <Link to={to}>{loading ? <Spin className='text-rose-600' /> : title}</Link>
       {children}
     </Button>
   ) : (
-    <Button htmlType={htmlType} type={type} className={btnClass} onClick={onClick} disabled={disabled}>
+    <Button
+      htmlType={htmlType}
+      type={type}
+      className={btnClass}
+      onClick={onClick}
+      disabled={disabled}
+      style={{ backgroundColor }}
+    >
       {loading ? <Spin className='text-rose-600' /> : title}
       {children}
     </Button>
