@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './stories/**/*.stories.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       fontFamily: {
@@ -13,7 +13,7 @@ export default {
         'system-text': '#bfbfbf'
       },
       boxShadow: {
-        'custom': '0 0 0 0.2rem #C7D2FE',
+        custom: '0 0 0 0.2rem #C7D2FE'
       }
     },
     keyframes: {
