@@ -9,7 +9,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 
 import { Form, Result, message } from 'antd'
-import { MailOutlined } from '@ant-design/icons'
 
 import { AppDispatch, RootState } from '@/store'
 import { resetMessage } from '@/store/slices'
@@ -120,16 +119,14 @@ export function ForgotPassword() {
               <div>
                 <h1 className='text-3xl font-semibold mb-4'>Forgot password</h1>
                 {msg && <p className='text-red-500 mb-2 text-lg'>{msg}</p>}
-                <span className='text-lg'>Please fill your email!</span>
-
                 <Form className='mt-6' onFinish={handleSubmit(handleForgotPassword)} layout='vertical'>
                   <CustomInput
                     name='email'
                     label='Email'
+                    size='large'
                     control={control}
                     errors={errors}
                     placeholder='Enter your email'
-                    prefixIcon={<MailOutlined />}
                   />
                   <CustomBtn title='Submit' type='primary' htmlType='submit' disabled={loading} loading={loading} />
                 </Form>

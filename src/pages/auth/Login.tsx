@@ -26,8 +26,8 @@ import { CustomBtn, CustomInput } from '@/components'
 import authBg from '@/assets/images/auth-bg.png'
 
 const schema = yup.object().shape({
-  email: yup.string().email('Please input a valid Email!').required('Please input your Email!'),
-  password: yup.string().min(8, 'Password needs to be at least 8 characters.').required('Please input your Password!')
+  email: yup.string().email('Please input a valid Email!').required('Please input your email!'),
+  password: yup.string().min(8, 'Password needs to be at least 8 characters.').required('Please input your password!')
 })
 
 export function Login() {
@@ -94,11 +94,12 @@ export function Login() {
                     <CustomInput
                       key={field.name}
                       name={field.name}
+                      size='large'
+                      type={field.type}
                       label={field.label}
                       control={control}
                       errors={errors}
                       placeholder={field.placeholder}
-                      prefixIcon={field.prefixIcon}
                     />
                   )
               })}

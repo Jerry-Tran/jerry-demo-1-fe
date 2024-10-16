@@ -186,25 +186,30 @@ export const authFields = [
     label: 'Username',
     name: 'name',
     placeholder: 'Enter your name',
-    prefixIcon: <UserOutlined />
+    prefixIcon: <UserOutlined />,
+    type:'text'
   },
   {
     label: 'Email',
     name: 'email',
     placeholder: 'Enter your email',
-    prefixIcon: <MailOutlined />
+    prefixIcon: <MailOutlined />,
+    type:'text'
   },
   {
     label: 'Password',
     name: 'password',
     placeholder: 'Enter your password',
-    prefixIcon: <LockOutlined />
+    prefixIcon: <LockOutlined />, 
+    type:'password'
   },
   {
     label: 'Confirm Password',
     name: 'confirmPassword',
     placeholder: 'Enter your password again',
-    prefixIcon: <LockOutlined />
+    prefixIcon: <LockOutlined />,
+    type:'password'
+
   }
 ]
 
