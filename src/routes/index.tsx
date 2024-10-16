@@ -1,19 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { AuthLayout, DefaultLayout, SystemLayout } from '@/layouts'
-import { Register, Login, ConfirmEmail, Home, ForgotPassword } from '@/pages'
+import { Register, Login, ConfirmEmail, ForgotPassword, ConfirmInvitation } from '@/pages'
 import { Dashboard, ManageUsers } from '@/pages/admin'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <DefaultLayout />,
-    children: [
-      {
-        path: '/',
-        element: <Home />,
-        handle: { breadcrumb: 'Home' }
-      }
-    ]
+    children: []
   },
   {
     path: '/',
@@ -56,5 +50,9 @@ export const router = createBrowserRouter([
         handle: { breadcrumb: 'Manage Users' }
       }
     ]
+  },
+  {
+    path: '/confirm-invitation/:inviteId',
+    element: <ConfirmInvitation />
   }
 ])
