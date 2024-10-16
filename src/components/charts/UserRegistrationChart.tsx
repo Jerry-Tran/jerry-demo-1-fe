@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
+import { Bar } from 'react-chartjs-2'
+import { Chart, registerables, TooltipItem } from 'chart.js'
+
 import { Select } from 'antd'
-import { Column } from '@ant-design/charts'
 
 import { dashboardService } from '@/services'
 
 import { AppDispatch, RootState } from '@/store'
 
 const { Option } = Select
+
+Chart.register(...registerables)
 
 export function UserRegistrationChart() {
   const dispatch = useDispatch<AppDispatch>()
@@ -25,25 +29,44 @@ export function UserRegistrationChart() {
 
   const filteredData = chartDataUsersRegistered?.data.filter((item) => item.year === selectedYear)
 
-  const config = {
-    data: filteredData,
-    xField: 'month',
-    yField: 'value',
-    label: {
-      style: {
-        fill: '#FFFFFF',
-        opacity: 0.6
+  const data = {
+    labels: filteredData.map((item) => item.month),
+    datasets: [
+      {
+        label: 'Users Registered',
+        data: filteredData.map((item) => item.value),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
       }
+    ]
+  }
+
+  const options = {
+    scales: {
+      x: {
+        grid: {
+          display: false, 
+        },
+      },
+      y: {
+        grid: {
+          display: false, 
+        },
+        beginAtZero: true
+      },
     },
-    xAxis: {
-      label: {
-        autoHide: true,
-        autoRotate: false
+    plugins: {
+      legend: {
+        position: 'top' as const 
+      },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem: TooltipItem<'bar'>) => {
+            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+          }
+        }
       }
-    },
-    meta: {
-      month: { alias: 'Month' },
-      value: { alias: 'Users Registered' }
     }
   }
 
@@ -59,7 +82,7 @@ export function UserRegistrationChart() {
           ))}
         </Select>
       </div>
-      <Column {...config} />
+      <Bar data={data} options={options} />
     </div>
   )
 }

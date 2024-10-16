@@ -1,17 +1,33 @@
-import { Outlet } from 'react-router-dom'
+import { Element } from 'react-scroll'
 
 import { Layout } from 'antd'
 
-const { Header, Footer, Content } = Layout
+import { Contact, Feature, Home, Pricing } from '@/pages'
+
+import { CustomFooter, CustomHeader } from './partials'
+
+const { Content } = Layout
 
 export const DefaultLayout = () => {
   return (
-    <Layout className='w-full max-w-full overflow-hidden'>
-      <Header className='text-center text-white h-16 px-12 leading-[64px] bg-[#4096ff]'>Header</Header>
-      <Content className='text-center min-h-[120px] text-white bg-[#0958d9]'>
-        <Outlet />
+    <Layout className='min-h-screen overflow-x-hidden'>
+      <CustomHeader />
+      <Content className='mt-16'>
+        <Element name='home'>
+          <Home />
+        </Element>
+        <Element name='feature'>
+          <Feature />
+        </Element>
+        <Element name='pricing'>
+          <Pricing />
+        </Element>
+        <Element name='contact'>
+          <Contact />
+        </Element>
       </Content>
-      <Footer className='text-center text-white bg-[#4096ff]'>Footer</Footer>
+
+      <CustomFooter />
     </Layout>
   )
 }
