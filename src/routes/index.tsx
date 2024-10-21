@@ -1,13 +1,33 @@
 import { createBrowserRouter } from 'react-router-dom'
+
 import { AuthLayout, DefaultLayout, SystemLayout } from '@/layouts'
-import { Register, Login, ConfirmEmail, ForgotPassword, ConfirmInvitation } from '@/pages'
+
+import { Register, Login, ConfirmEmail, ForgotPassword, ConfirmInvitation, Profile, Home } from '@/pages'
+
 import { Dashboard, ManageUsers } from '@/pages/admin'
+
+import { CustomError } from '@/components'
+
+import { ProtectedRoute } from './ProtectedRoute'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <DefaultLayout />,
-    children: []
+    children: [
+      {
+        path: '/',
+        element: <Home />
+      },
+      {
+        path: '/profile',
+        element: (
+          <ProtectedRoute role='user'>
+            <Profile />
+          </ProtectedRoute>
+        )
+      }
+    ]
   },
   {
     path: '/',
@@ -37,22 +57,47 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <SystemLayout />,
+    element: (
+      <ProtectedRoute role='admin'>
+        <SystemLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: '/admin',
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute role='admin'>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
         handle: { breadcrumb: 'Dashboard' }
       },
       {
         path: '/admin/users',
-        element: <ManageUsers />,
+        element: (
+          <ProtectedRoute role='admin'>
+            <ManageUsers />
+          </ProtectedRoute>
+        ),
         handle: { breadcrumb: 'Manage Users' }
+      },
+      {
+        path: '/admin/profile',
+        element: (
+          <ProtectedRoute role='admin'>
+            <Profile />
+          </ProtectedRoute>
+        ),
+        handle: { breadcrumb: 'Profile' }
       }
     ]
   },
   {
     path: '/confirm-invitation/:inviteId',
     element: <ConfirmInvitation />
+  },
+  {
+    path: '*',
+    element: <CustomError status='404' title='404' subTitle='Sorry, the page you visited does not exist.' />
   }
 ])

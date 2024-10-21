@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { authApi } from '@/apis'
 
-import { ILoginData, IRegisterData, IResetPasswordData, IVerifyOTP } from '@/interfaces'
+import { ChangePassWordData, ILoginData, IRegisterData, IResetPasswordData, IVerifyOTP } from '@/interfaces'
 
 export const authService = {
   register: createAsyncThunk('auth/register', async (userData: IRegisterData, { rejectWithValue }) => {
@@ -67,5 +67,17 @@ export const authService = {
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message)
     }
-  })
+  }),
+
+  changePassword: createAsyncThunk(
+    'user/change-password',
+    async (changePassWordData: ChangePassWordData, { rejectWithValue }) => {
+      try {
+        const response = await authApi.changePassword(changePassWordData)
+        return response.data
+      } catch (error: any) {
+        return rejectWithValue(error.response?.data || error.message)
+      }
+    }
+  )
 }

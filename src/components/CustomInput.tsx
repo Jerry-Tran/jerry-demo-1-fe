@@ -12,6 +12,7 @@ type CustomInputProps = {
   size: 'large' | 'middle' | 'small'
   className?: string
   type?: string
+  disabled?: boolean
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   prefixIcon?: JSX.Element
 }
@@ -26,6 +27,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   className,
   prefixIcon = null,
   type = 'text',
+  disabled = false,
   onChange
 }) => {
   return control ? (
@@ -45,6 +47,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
+              disabled={disabled}
               className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
             />
           ) : (
@@ -53,6 +56,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
+              disabled={disabled}
               className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
             />
           )
@@ -65,6 +69,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       size={size}
       onChange={onChange}
       placeholder={placeholder}
+      disabled={disabled}
       className={`text-lg font-medium mr-2 border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom ${className}`}
     />
   )

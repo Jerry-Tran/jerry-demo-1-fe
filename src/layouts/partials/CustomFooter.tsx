@@ -14,9 +14,9 @@ export const CustomFooter = () => {
             <div className='flex items-center mb-2'>
               <h2 className='text-2xl font-bold text-white'>GoPass</h2>
             </div>
-            <span className='mb-2'>Helping you securely store and manage your login information with ease.</span>
+            <span className='mb-2 text-lg'>Helping you securely store and manage your login information with ease.</span>
             <br />
-            <span>
+            <span className='text-lg'>
               GoPass offers a secure solution for user information, allowing you to quickly access accounts without the
               need to remember passwords. Contact us to learn more!
             </span>
@@ -36,7 +36,7 @@ export const CustomFooter = () => {
               <h4 className='text-lg font-bold mb-2'>{serviceInfo.title}</h4>
               <ul>
                 {serviceInfo.links.map((link) => (
-                  <li key={link}>
+                  <li key={link} className='text-lg'>
                     <a href='#'>{link}</a>
                   </li>
                 ))}

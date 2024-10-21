@@ -13,7 +13,11 @@ export default {
         'system-text': '#bfbfbf'
       },
       boxShadow: {
-        custom: '0 0 0 0.2rem #C7D2FE'
+        custom: '0 0 0 1px #0A2FB6',
+        error: '0 0 0 1px #ff4d4f'
+      },
+      screens: {
+        xs: '375px'
       }
     },
     keyframes: {

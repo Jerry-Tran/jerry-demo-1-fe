@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
-import { BiSolidUserAccount, FaUsers, ImProfile, TbLayoutDashboardFilled } from '@/utils/icons'
+import {  FaUsers, ImProfile, TbLayoutDashboardFilled } from '@/utils/icons'
 import logo from '@/assets/images/secure.png'
 
 const { Sider } = Layout
@@ -21,12 +21,6 @@ const sideBarMenu = [
     to: '/admin/users',
     icon: <FaUsers />,
     text: 'Users'
-  },
-  {
-    key: '3',
-    to: '/admin/workspaces',
-    icon: <BiSolidUserAccount />,
-    text: 'Workspaces'
   },
   {
     key: '4',

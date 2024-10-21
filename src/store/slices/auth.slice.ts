@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { authService, userService } from '@/services'
 
-import { ICurrentUser, ILoginPayload, IRegisterPayload } from '@/interfaces'
+import { ICurrentUser } from '@/interfaces'
 
 type AuthState = {
   isLoggedIn: boolean
@@ -36,7 +36,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(authService.register.fulfilled, (state, action: PayloadAction<IRegisterPayload>) => {
+      .addCase(authService.register.fulfilled, (state, action) => {
         const { message } = action.payload
         state.message = message
       })
@@ -45,7 +45,7 @@ const authSlice = createSlice({
         state.error = errorCode
         state.message = message
       })
-      .addCase(authService.login.fulfilled, (state, action: PayloadAction<ILoginPayload>) => {
+      .addCase(authService.login.fulfilled, (state, action) => {
         const { message, currentUser } = action.payload
         state.isLoggedIn = true
         state.message = message
@@ -84,11 +84,22 @@ const authSlice = createSlice({
         state.error = errorCode
         state.message = message
       })
-      .addCase(userService.getCurrentUser.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(authService.changePassword.fulfilled, (state, action) => {
+        state.message = action.payload.message
+        state.error = null
+      })
+      .addCase(authService.changePassword.rejected, (state, action: PayloadAction<any>) => {
+        state.error = action.payload.errorCode
+        state.message = action.payload.message
+      })
+      .addCase(userService.getCurrentUser.fulfilled, (state, action) => {
         state.currentUser = action.payload
       })
       .addCase(userService.getCurrentUser.rejected, (state) => {
         state.currentUser = null
+      })
+      .addCase(userService.updateProfile.fulfilled, (state, action) => {
+        state.currentUser = action.payload
       })
   }
 })

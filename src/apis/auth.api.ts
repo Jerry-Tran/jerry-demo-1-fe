@@ -1,5 +1,5 @@
 import { instance as axiosClient } from '@/config'
-import { ILoginData, IRegisterData, IResetPasswordData, IVerifyOTP } from '@/interfaces'
+import { ChangePassWordData, ILoginData, IRegisterData, IResetPasswordData, IVerifyOTP } from '@/interfaces'
 
 export const authApi = {
   register: async (userData: IRegisterData) => {
@@ -28,5 +28,9 @@ export const authApi = {
 
   resetPassword: async (data: IResetPasswordData) => {
     return await axiosClient.post('/auth/reset-password', data)
+  },
+
+  changePassword: async (changePassWordData: ChangePassWordData) => {
+    return await axiosClient.patch('auth/change-password', changePassWordData)
   }
 }
