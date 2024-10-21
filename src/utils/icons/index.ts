@@ -3,9 +3,11 @@ import { TbLayoutDashboardFilled } from 'react-icons/tb'
 import { FaUsers } from 'react-icons/fa'
 import { BiSolidUserAccount } from 'react-icons/bi'
 import { ImProfile } from 'react-icons/im'
-import { IoMdCheckmark } from 'react-icons/io'
+import { IoMdCheckmark, IoMdClose } from 'react-icons/io'
 import { IoLogOut } from 'react-icons/io5'
 import { IoSettingsSharp } from 'react-icons/io5'
+import { IoMenu } from 'react-icons/io5'
+
 export {
   FaUserCircle,
   TbLayoutDashboardFilled,
@@ -14,5 +16,7 @@ export {
   ImProfile,
   IoMdCheckmark,
   IoLogOut,
-  IoSettingsSharp
+  IoSettingsSharp,
+  IoMenu,
+  IoMdClose
 }

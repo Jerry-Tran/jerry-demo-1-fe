@@ -9,9 +9,7 @@ import {
   FacebookOutlined,
   TwitterOutlined,
   InstagramOutlined,
-  LinkedinOutlined,
-  MailOutlined,
-  UserOutlined
+  LinkedinOutlined
 } from '@ant-design/icons'
 
 export const localStorageKeys = {
@@ -186,30 +184,73 @@ export const authFields = [
     label: 'Username',
     name: 'name',
     placeholder: 'Enter your name',
-    prefixIcon: <UserOutlined />,
-    type:'text'
+    type: 'text'
   },
   {
     label: 'Email',
     name: 'email',
     placeholder: 'Enter your email',
-    prefixIcon: <MailOutlined />,
-    type:'text'
+    type: 'text'
   },
   {
     label: 'Password',
     name: 'password',
     placeholder: 'Enter your password',
-    prefixIcon: <LockOutlined />, 
-    type:'password'
+    type: 'password'
   },
   {
     label: 'Confirm Password',
     name: 'confirmPassword',
     placeholder: 'Enter your password again',
-    prefixIcon: <LockOutlined />,
-    type:'password'
-
+    type: 'password'
   }
 ]
 
+export const profileFields = [
+  {
+    label: 'Avatar',
+    name: 'avatar',
+    placeholder: 'Enter your email',
+    type: 'text'
+  },
+  {
+    label: 'Username',
+    name: 'name',
+    placeholder: 'Enter your name',
+    type: 'text'
+  },
+  {
+    label: 'Email',
+    name: 'email',
+    placeholder: 'Enter your email',
+    type: 'text'
+  },
+
+  {
+    label: 'Phone number',
+    name: 'phoneNumber',
+    placeholder: 'Enter your email',
+    type: 'text'
+  }
+]
+
+export const changePasswordFields = [
+  {
+    label: 'Current password',
+    name: 'currentPassword',
+    placeholder: 'Enter your current password',
+    type: 'password'
+  },
+  {
+    label: 'New password',
+    name: 'newPassword',
+    placeholder: 'Enter your new password',
+    type: 'password'
+  },
+  {
+    label: 'Confirm Password',
+    name: 'confirmPassword',
+    placeholder: 'Enter your password again',
+    type: 'password'
+  }
+]

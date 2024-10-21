@@ -1,58 +1,28 @@
 import { useEffect, useState } from 'react'
+
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Pagination, Space, Table } from 'antd'
+
+import { Button, Modal, Pagination, Space, Table } from 'antd'
 import type { GetProp, TableProps } from 'antd'
 import type { SorterResult } from 'antd/es/table/interface'
 
-import { userService } from '@/services'
-import { UserInfo } from '@/interfaces'
-import { AppDispatch, RootState } from '@/store'
 import { useBoolean } from '@/hooks'
+
+import { UserInfo } from '@/interfaces'
+
+import { userService } from '@/services'
+
+import { AppDispatch, RootState } from '@/store'
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns']
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
-interface TableParams {
+type TableParams = {
   pagination?: TablePaginationConfig
   sortField?: SorterResult<UserInfo>['field']
   sortOrder?: SorterResult<UserInfo>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
-
-const columns: ColumnsType<UserInfo> = [
-  {
-    title: 'Id',
-    dataIndex: 'id',
-    key: 'id',
-    render: (text) => <span>{text}</span>
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name'
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-    key: 'email'
-  },
-  {
-    title: 'Accounts',
-    dataIndex: 'accountscount',
-    key: 'accounts'
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: () => (
-      <Space size='middle'>
-        <Button type='primary' danger>
-          Block
-        </Button>
-      </Space>
-    )
-  }
-]
 
 export function ManageUsers() {
   const dispatch = useDispatch<AppDispatch>()
@@ -61,13 +31,123 @@ export function ManageUsers() {
 
   const { value: loading, setTrue: setLoading, setFalse: setUnloading } = useBoolean(false)
 
+  const [activeUserId, setActiveUserId] = useState<string>('')
+
+  const [deleteUserId, setDeleteUserId] = useState<string>('')
+
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
-      pageSize: 1
+      pageSize: 20
     }
   })
 
+  const handleTableChange: TableProps<UserInfo>['onChange'] = (pagination, filters, sorter) => {
+    setTableParams({
+      pagination: {
+        ...tableParams.pagination,
+        current: pagination.current,
+        pageSize: pagination.pageSize
+      },
+      filters,
+      sortOrder: Array.isArray(sorter) ? undefined : sorter.order,
+      sortField: Array.isArray(sorter) ? undefined : sorter.field
+    })
+  }
+
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    setTableParams((prev) => ({
+      ...prev,
+      pagination: {
+        ...prev.pagination,
+        current: page,
+        pageSize
+      }
+    }))
+  }
+  const handleCancelDelete = () => {
+    setDeleteUserId('')
+  }
+  const handleCancelActive = () => {
+    setActiveUserId('')
+  }
+
+  const handleDeactivateUser = async () => {
+    try {
+      setLoading()
+      await dispatch(userService.deactivateUser(deleteUserId))
+      handleCancelDelete()
+    } catch (error) {
+      console.error('Error deactivating user:', error)
+    } finally {
+      setUnloading()
+    }
+  }
+  const handleActiveUser = async () => {
+    try {
+      setLoading()
+      await dispatch(userService.activeUser(activeUserId))
+      handleCancelActive()
+    } catch (error) {
+      console.error('Error deactivating user:', error)
+    } finally {
+      setUnloading()
+    }
+  }
+  const handleConfirmDeactivateUser = (userId: string) => {
+    setDeleteUserId(userId)
+  }
+
+  const handleConfirmActiveUser = (userId: string) => {
+    setActiveUserId(userId)
+  }
+  const columns: ColumnsType<UserInfo> = [
+    {
+      title: 'Id',
+      dataIndex: 'id',
+      key: 'id'
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name'
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email'
+    },
+    {
+      title: 'Accounts',
+      dataIndex: 'accountscount',
+      key: 'accounts'
+    },
+    {
+      title: 'Workspaces',
+      dataIndex: 'workspacescount',
+      key: 'workspaces'
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => {
+        console.log('record', record)
+        return (
+          <Space size='middle'>
+            {record.deleted ? (
+              <Button type='primary' className='bg-primary-500' onClick={() => handleConfirmActiveUser(record.id)}>
+                Active
+              </Button>
+            ) : (
+              <Button type='primary' className='bg-gray-500' onClick={() => handleConfirmDeactivateUser(record.id)}>
+                Deactivate
+              </Button>
+            )}
+          </Space>
+        )
+      }
+    }
+  ]
   useEffect(() => {
     const fetchData = () => {
       const { current, pageSize } = tableParams.pagination || {}
@@ -83,19 +163,6 @@ export function ManageUsers() {
     fetchData()
   }, [dispatch, setLoading, setUnloading, tableParams])
 
-  const handleTableChange: TableProps<UserInfo>['onChange'] = (pagination, filters, sorter) => {
-    setTableParams({
-      pagination: {
-        ...tableParams.pagination,
-        current: pagination.current,
-        pageSize: pagination.pageSize
-      },
-      filters,
-      sortOrder: Array.isArray(sorter) ? undefined : sorter.order,
-      sortField: Array.isArray(sorter) ? undefined : sorter.field
-    })
-  }
-
   useEffect(() => {
     if (totalItems) {
       setTableParams((prev) => ({
@@ -108,36 +175,54 @@ export function ManageUsers() {
     }
   }, [totalItems])
 
-  const handlePaginationChange = (page: number, pageSize: number) => {
-    setTableParams((prev) => ({
-      ...prev,
-      pagination: {
-        ...prev.pagination,
-        current: page,
-        pageSize
-      }
-    }))
-  }
-
   return (
-    <>
+    <section className='bg-gray-100'>
+      <Modal
+        open={!!deleteUserId}
+        title='Warning'
+        onCancel={handleCancelDelete}
+        footer={(_, { CancelBtn }) => (
+          <>
+            <CancelBtn />
+            <Button danger type='primary' onClick={handleDeactivateUser} loading={loading}>
+              Deactivate
+            </Button>
+          </>
+        )}
+      >
+        <span>This user will be deactivated. Are you sure?</span>
+      </Modal>
+      <Modal
+        open={!!activeUserId}
+        title='Warning'
+        onCancel={handleCancelActive}
+        footer={(_, { CancelBtn }) => (
+          <>
+            <CancelBtn />
+            <Button type='primary' onClick={handleActiveUser} loading={loading}>
+              Active
+            </Button>
+          </>
+        )}
+      >
+        <span>This user will be active. Are you sure?</span>
+      </Modal>
       <Table<UserInfo>
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={listUsers}
-        loading={loading}
         pagination={false}
         onChange={handleTableChange}
       />
 
       <Pagination
-        style={{ marginTop: 16, textAlign: 'center' }}
+        className='p-4 text-center bg-white'
         current={tableParams.pagination?.current}
         showQuickJumper
         pageSize={tableParams.pagination?.pageSize}
         total={tableParams.pagination?.total}
         onChange={handlePaginationChange}
       />
-    </>
+    </section>
   )
 }

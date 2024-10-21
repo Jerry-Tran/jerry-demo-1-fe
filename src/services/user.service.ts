@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { userApi } from '@/apis'
 
-import { IPaginationParams } from '@/interfaces'
+import { ICurrentUser, IPaginationParams } from '@/interfaces'
 
 export const userService = {
   getUsers: createAsyncThunk('user/get-users', async (query: IPaginationParams, { rejectWithValue }) => {
@@ -17,6 +17,33 @@ export const userService = {
   getCurrentUser: createAsyncThunk('user/get-current-user', async (_, { rejectWithValue }) => {
     try {
       const response = await userApi.getCurrentUser()
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
+  updateProfile: createAsyncThunk(
+    'user/update-profile',
+    async (profileData: Omit<ICurrentUser, 'id' | 'role' | 'email'>, { rejectWithValue }) => {
+      try {
+        const response = await userApi.updateProfile(profileData)
+        return response.data
+      } catch (error: any) {
+        return rejectWithValue(error.response?.data || error.message)
+      }
+    }
+  ),
+  deactivateUser: createAsyncThunk('user/deactivate-user', async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await userApi.deactivateUser(userId)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }),
+  activeUser: createAsyncThunk('user/active-user', async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await userApi.activeUser(userId)
       return response.data
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message)
