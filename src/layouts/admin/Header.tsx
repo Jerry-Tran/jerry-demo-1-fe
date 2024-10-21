@@ -8,8 +8,7 @@ import { authService } from '@/services'
 
 import { CustomBreadcrumb } from '@/components'
 
-import { FaUserCircle, IoLogOut, IoSettingsSharp } from '@/utils/icons'
-
+import { FaUserCircle, IoLogOut, ImProfile } from '@/utils/icons'
 
 const { Header } = Layout
 
@@ -18,18 +17,18 @@ export function SystemHeader() {
   const { currentUser } = useSelector((state: RootState) => state.auth)
 
   const handleLogout = async () => {
-   dispatch(authService.logout())
+    dispatch(authService.logout())
   }
 
   const userAction: MenuProps['items'] = [
     {
-      key: 'settings',
+      key: 'profile',
       label: (
         <button className='flex items-center text-slate-700'>
           <span className='text-slate-700 text-xl mr-2'>
-            <IoSettingsSharp />
+            <ImProfile />
           </span>
-          <span className='text-lg'>Settings</span>
+          <span className='text-lg'>Profile</span>
         </button>
       )
     },
@@ -50,14 +49,20 @@ export function SystemHeader() {
     <Header className='flex justify-between items-center bg-system-primary'>
       <CustomBreadcrumb />
       <div className='flex items-center'>
-        <Dropdown menu={{ items: userAction }} trigger={['click']}>
-          <span className='flex items-center cursor-pointer'>
-            <span className='text-lg mr-2'>{currentUser?.name}</span>
-            <span className='text-primary-500 text-3xl'>
-              <FaUserCircle />
+        {currentUser && (
+          <Dropdown menu={{ items: userAction }} trigger={['click']}>
+            <span className='flex items-center cursor-pointer'>
+              <span className='text-lg mr-2'>{currentUser?.name}</span>
+              <span className='text-primary-500 text-3xl'>
+                {currentUser.avatar ? (
+                  <img src={currentUser.avatar} alt='user-avatar' className='w-12 h-12 rounded-md' />
+                ) : (
+                  <FaUserCircle />
+                )}
+              </span>
             </span>
-          </span>
-        </Dropdown>
+          </Dropdown>
+        )}
       </div>
     </Header>
   )

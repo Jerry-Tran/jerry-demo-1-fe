@@ -52,7 +52,7 @@ export function Newpassword({ loading, handleResetPassword }: NewPasswordProps) 
   }, [dispatch])
 
   return (
-    <section>
+    <section className='xs:px-4 md:px-0'>
       <h1 className='text-3xl font-semibold mb-4'>Reset Password</h1>
       {message && <p className='text-red-500 mb-2 text-lg'>{message}</p>}
       <Form className='mt-6' onFinish={handleSubmit(handleResetPassword)} layout='vertical'>

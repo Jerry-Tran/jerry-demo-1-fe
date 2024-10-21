@@ -20,6 +20,7 @@ import { useBoolean } from '@/hooks'
 import { IRegisterData } from '@/interfaces'
 
 import { authFields } from '@/utils/constants'
+import { IoMdClose } from '@/utils/icons'
 
 import { CustomBtn, CustomInput } from '@/components'
 
@@ -62,6 +63,10 @@ export function Register() {
     }
   }
 
+  const onBack = () => {
+    navigate('/')
+  }
+
   useEffect(() => {
     dispatch(resetMessage())
   }, [dispatch])
@@ -74,10 +79,15 @@ export function Register() {
 
   return (
     <section className='h-screen flex items-center justify-center'>
-      <div className='w-full mx-auto flex items-center bg-white shadow-lg rounded-lg overflow-hidden h-full'>
+      <div className='w-full mx-auto flex xs:flex-col lg:flex-row items-center bg-white shadow-lg rounded-lg overflow-hidden h-full'>
         <div className='hidden lg:block w-[60%] h-full'>
           <img src={authBg} alt='Auth Background' className='object-cover h-full w-full' />
         </div>
+        <button className='lg:hidden hover:bg-gray-300 cursor-pointer xs:block xs:w-full p-4' onClick={onBack}>
+          <span>
+            <IoMdClose className='text-3xl text-gray-700 font-semibold float-right' />
+          </span>
+        </button>
         {msg && !error ? (
           <Result
             className='flex-1 animate-fadeIn'
@@ -93,7 +103,7 @@ export function Register() {
             ]}
           />
         ) : (
-          <div className='flex flex-1 bg-white'>
+          <div className='flex flex-1 bg-white xs:w-full pb-4'>
             <div className='m-auto w-[80%]'>
               <h1 className='text-3xl font-semibold mb-4'>Sign up</h1>
               {msg && <p className='text-red-500 mb-2 text-lg'>{msg}</p>}

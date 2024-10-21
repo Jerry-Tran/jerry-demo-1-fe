@@ -6,6 +6,8 @@ export interface ICurrentUser {
   name: string
   role: string
   email: string
+  avatar?: string
+  phoneNumber?: string
 }
 export interface ILoginPayload {
   message: string

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -20,6 +20,7 @@ import { authService } from '@/services'
 import { CustomBtn, CustomInput } from '@/components'
 
 import { localStorageKeys } from '@/utils/constants'
+import { IoMdClose } from '@/utils/icons'
 
 import authBg from '@/assets/images/forgot-password-bg.png'
 
@@ -36,6 +37,7 @@ const emailSchema = yup.object().shape({
 })
 
 export function ForgotPassword() {
+  const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
 
   const { message: msg } = useSelector((state: RootState) => state.auth)
@@ -103,18 +105,27 @@ export function ForgotPassword() {
     setUnloading()
   }
 
+  const onBack = () => {
+    navigate('/')
+  }
+
   useEffect(() => {
     dispatch(resetMessage())
   }, [dispatch])
 
   return (
     <section className='h-screen flex items-center justify-center'>
-      <div className='w-full mx-auto flex items-center bg-white shadow-lg rounded-lg overflow-hidden h-full'>
-        <div className='hidden lg:block w-[60%] h-full'>
+      <div className='w-full mx-auto flex xs:flex-col xs:px-4 lg:flex-row items-center bg-white shadow-lg rounded-lg overflow-hidden h-full'>
+        <div className='hidden lg:block w-[60%] xl:h-full'>
           <img src={authBg} alt='Auth Background' className='object-cover h-full w-full' />
         </div>
-        <div className='flex flex-1 bg-white'>
-          <div className={`m-auto ${showOtp && showResult && !showNewPasswordForm ? 'w-full' : 'w-[80%]'}`}>
+        <button className='lg:hidden hover:bg-gray-300 cursor-pointer xs:block xs:w-full py-4' onClick={onBack}>
+          <span>
+            <IoMdClose className='text-3xl text-gray-700 font-semibold float-right' />
+          </span>
+        </button>
+        <div className='flex flex-1 bg-white xs:w-full xs:mb-64 lg:mb-0'>
+          <div className={`m-auto ${showOtp && showResult && !showNewPasswordForm ? 'w-full' : 'lg:w-[80%] xs:w-full'}`}>
             {!showOtp && !showNewPasswordForm && (
               <div>
                 <h1 className='text-3xl font-semibold mb-4'>Forgot password</h1>

@@ -98,7 +98,7 @@ export function VerifyOtp({ loading, onVerifyOtp }: VerifyOtpProps) {
 
   return (
     <div className='flex flex-1 bg-white'>
-      <div className='max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow m-2'>
+      <div className='max-w-md mx-auto text-center bg-white px-4 xs:px-1 sm:px-8 py-10 rounded-xl'>
         <header className='mb-8'>
           <h1 className='text-2xl font-bold mb-1'>Verify Your Account</h1>
           {message && <p className='text-red-500 mb-2 text-lg'>{message}</p>}
@@ -127,7 +127,7 @@ export function VerifyOtp({ loading, onVerifyOtp }: VerifyOtpProps) {
                         onPaste={handlePaste}
                         ref={(el) => (inputs.current[index] = el)}
                         maxLength={1}
-                        className='lg:w-[50px] lg:h-[50px] text-center w-[40px] h-[40px] text-base'
+                        className='lg:w-[50px] lg:h-[50px] text-center w-[40px] h-[40px] xs:w-[45px] xs:h-[45px] text-base'
                       />
                     )}
                   />
