@@ -13,7 +13,6 @@ export const uploadToCloudinary = async (file: FileType): Promise<string | null>
       `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload/`,
       formData
     )
-    console.log('upload', response)
     if (response?.data.secure_url) {
       return response?.data.secure_url
     } else {
