@@ -123,15 +123,9 @@ export function ManageUsers() {
       key: 'accounts'
     },
     {
-      title: 'Workspaces',
-      dataIndex: 'workspacescount',
-      key: 'workspaces'
-    },
-    {
       title: 'Action',
       key: 'action',
       render: (_, record) => {
-        console.log('record', record)
         return (
           <Space size='middle'>
             {record.deleted ? (
