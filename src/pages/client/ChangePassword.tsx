@@ -74,7 +74,6 @@ export const ChangePassword = () => {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
     if (msg && !error) {
-      console.log('vc')
       setShowSuccessResult()
       reset()
       timer = setTimeout(() => {

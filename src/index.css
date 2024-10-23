@@ -37,10 +37,17 @@
   font-weight: 500;
 }
 
-.ant-statistic-content-value-int{
+.ant-statistic-content-value-int {
   font-weight: 500;
 }
 
-.ant-drawer-body{
+.ant-drawer-body {
   padding: 0px !important;
+}
+.ant-result-title {
+  font-size: 30px;
+}
+.ant-result-subtitle {
+  font-size: 22px !important;
+  color: #000 !important;
 }
